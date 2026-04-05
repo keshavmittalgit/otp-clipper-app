@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "274540209132",
+    "project_id": "otp-clipper-v2",
+    "storage_bucket": "otp-clipper-v2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:274540209132:android:b13a49818fe636feeb16c9",
+        "android_client_info": {
+          "package_name": "com.keshavmittal7974.otpclipperapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "274540209132-57neg8f3mia7st341o5bj1k01o6tm660.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.keshavmittal7974.otpclipperapp",
+            "certificate_hash": "856a01808eeec5c2884c8850402a39d650095733"
+          }
+        },
+        {
+          "client_id": "274540209132-9vfq6o9tpv5g24hfa6mjqha26h0u61in.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwSe7j57rmK0UP9qyy_-lvUVPJiC7yAGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274540209132-9vfq6o9tpv5g24hfa6mjqha26h0u61in.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

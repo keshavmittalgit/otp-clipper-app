@@ -1,9 +1,8 @@
 import GoogleIcon from "@/components/google-icon";
-// import { auth } from "@/firebaseConfig";
-import * as Google from "expo-auth-session/providers/google";
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
-import { GoogleAuthProvider, signInWithCredential } from "firebase/auth";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -15,38 +14,44 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// Replace these with your actual IDs from the Google Cloud Console
-const WEB_CLIENT_ID = "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com";
-const IOS_CLIENT_ID = "YOUR_IOS_CLIENT_ID.apps.googleusercontent.com";
-const ANDROID_CLIENT_ID = "YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com";
+// IMPORTANT: Replace this with the Web client ID found in Firebase Console -> Authentication -> Sign-in method -> Google.
+// You still need the Web Client ID here even if building for Native Mobile.
+GoogleSignin.configure({
+  webClientId:
+    "274540209132-9vfq6o9tpv5g24hfa6mjqha26h0u61in.apps.googleusercontent.com",
+    offlineAccess: true,
+    
+});
 
 export default function Login() {
   const insets = useSafeAreaInsets();
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: WEB_CLIENT_ID,
-    iosClientId: IOS_CLIENT_ID,
-    androidClientId: ANDROID_CLIENT_ID,
-  });
+  const handleGoogleLogin = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const signInResult = await GoogleSignin.signIn();
 
-  // useEffect(() => {
-  //   if (response?.type === "success") {
-  //     const { id_token } = response.params;
-  //     const credential = GoogleAuthProvider.credential(id_token);
-  //     signInWithCredential(auth, credential)
-  //       .then((userCredential) => {
-  //         console.log("Logged in user:", userCredential.user);
-  //         router.replace("/");
-  //       })
-  //       .catch((error) => {
-  //         console.error("Firebase Login Error:", error);
-  //         alert("Login failed: " + error.message);
-  //       });
-  //   }
-  // }, [response]);
+      let idToken;
+      if (signInResult.type === "success") {
+        idToken = signInResult.data.idToken;
+      } else {
+        return; // Sign in was cancelled or in progress
+      }
 
-  const handleGoogleLogin = () => {
-    promptAsync();
+      if (!idToken) throw new Error("No ID token found");
+
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const userCredential =
+        await auth().signInWithCredential(googleCredential);
+
+      console.log("Logged in user:", userCredential.user);
+      router.replace("/");
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      alert("Login failed: " + (error as Error).message);
+    }
   };
 
   return (
@@ -64,7 +69,7 @@ export default function Login() {
             paddingBottom: insets.bottom,
           }}
         >
-          <View className="items-center mb-32">
+          <View className="items-center mb-20">
             <View className=" bg-transparent rounded-3xl justify-center items-center overflow-hidden">
               <View className="w-48 h-48 bg-transparent rounded-3xl justify-center items-center mb-4   overflow-hidden ">
                 <Image
@@ -86,8 +91,7 @@ export default function Login() {
           <View className="w-full">
             <TouchableOpacity
               activeOpacity={0.8}
-              disabled={!request}
-              className={`h-[64px] rounded-full justify-center items-center flex-row bg-black/90 dark:bg-white ${!request ? "opacity-50" : ""}`}
+              className="h-[64px] rounded-full justify-center items-center flex-row bg-black/90 dark:bg-white"
               onPress={handleGoogleLogin}
             >
               <GoogleIcon size={24} />
