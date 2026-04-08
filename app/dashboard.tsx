@@ -1,16 +1,10 @@
+import ConfirmModal from "@/components/confirm-modal";
 import { getAuth, signOut } from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 
-import {
-  Image,
-  Modal,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // Suppress unhandled promise rejections for "Keep Awake" in development
@@ -85,8 +79,8 @@ export default function Dashboard() {
     <View className="flex-1 bg-white dark:bg-black">
       {/* Top Navbar Card */}
       <View style={{ paddingTop: insets.top + 10 }} className="px-4">
-        <View className="bg-[#121212] dark:bg-[#121212] rounded-[24px] pl-6 p-4 flex-row items-center border border-white/5 shadow-2xl">
-          <View className="flex-1">
+        <View className="bg-[#121212] dark:bg-[#121212] rounded-[24px] p-4 flex-row items-center border border-white/5 shadow-2xl">
+          <View className="flex-1 pl-1.5">
             <Text className="text-2xl font-black text-white mb-0.5 tracking-tight">
               OTP Clipper
             </Text>
@@ -121,49 +115,15 @@ export default function Dashboard() {
         </Text>
       </View>
 
-      {/* Custom Logout Modal */}
-      <Modal
+      <ConfirmModal
         visible={showLogoutModal}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setShowLogoutModal(false)}
-      >
-        <Pressable
-          className="flex-1 bg-black/60 justify-center items-center px-6"
-          onPress={() => setShowLogoutModal(false)}
-        >
-          <Pressable
-            className="w-full bg-[#121212] rounded-[32px] p-8 border border-white/5 shadow-2xl"
-            onPress={(e) => e.stopPropagation()}
-          >
-            <Text className="text-white text-2xl font-bold text-center mb-3">
-              Logout
-            </Text>
-            <Text className="text-zinc-400 text-base text-center mb-6 leading-6">
-              Are you sure you want to logout? You will need to sign in again to
-              access your account and settings.
-            </Text>
-
-            <View className="flex-row gap-4">
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setShowLogoutModal(false)}
-                className="flex-1 h-14 bg-[#252525] rounded-2xl justify-center items-center"
-              >
-                <Text className="text-white text-lg font-bold">Cancel</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={confirmLogout}
-                className="flex-1 h-14 bg-red-600 rounded-2xl justify-center items-center"
-              >
-                <Text className="text-white text-lg font-bold">Logout</Text>
-              </TouchableOpacity>
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
+        title="Logout"
+        description="Are you sure you want to logout? You will need to sign in again to access  your account and settings."
+        confirmText="Logout"
+        confirmButtonColor="bg-red-700"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </View>
   );
 }
