@@ -1,11 +1,9 @@
-import ConfirmModal from "@/components/confirm-modal";
-import { getAuth, signOut } from "@react-native-firebase/auth";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import AuthenticatedLayout from "@/components/authenticated-layout";
+import LinkIcon from "@/components/link-icon";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 // Suppress unhandled promise rejections for "Keep Awake" in development
 if (__DEV__) {
@@ -18,112 +16,41 @@ if (__DEV__) {
     }
     if (typeof originalHandler === "function") {
       // @ts-ignore
-      originalHandler.apply(global, [id, ...arguments]);
+      originalHandler(id, error);
     }
   };
 }
 
 export default function Dashboard() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const [user, setUser] = useState<{
-    displayName?: string;
-    email?: string;
-    photoURL?: string | null;
-  } | null>(null);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-  useEffect(() => {
-    const auth = getAuth();
-    const current = auth.currentUser;
-    if (current) {
-      setUser({
-        displayName: current.displayName ?? "User",
-        email: current.email ?? "",
-        photoURL: current.photoURL,
-      });
-    } else {
-      // If no logged‑in user, redirect to login
-      // @ts-ignore
-      router.replace("/login");
-    }
-  }, []);
-
-  const handleLogout = () => {
-    setShowLogoutModal(true);
-  };
-
-  const confirmLogout = async () => {
-    try {
-      setShowLogoutModal(false);
-      const auth = getAuth();
-
-      // Clear Google Sign-In session to force account selection next time
-      try {
-        await GoogleSignin.signOut();
-        await GoogleSignin.revokeAccess();
-      } catch (e) {
-        // Ignore "SIGN_IN_REQUIRED" or other cleanup errors
-        console.log("Google session cleanup skipped:", e);
-      }
-
-      await signOut(auth);
-      // @ts-ignore
-      router.replace("/login");
-    } catch (error) {
-      console.error("Logout Error:", error);
-    }
-  };
 
   return (
-    <View className="flex-1 bg-white dark:bg-black">
-      {/* Top Navbar Card */}
-      <View style={{ paddingTop: insets.top + 10 }} className="px-4">
-        <View className="bg-[#121212] dark:bg-[#121212] rounded-[24px] p-4 flex-row items-center border border-white/5 shadow-2xl">
-          <View className="flex-1 pl-1.5">
-            <Text className="text-2xl font-black text-white mb-0.5 tracking-tight">
-              OTP Clipper
-            </Text>
-            <Text className="text-sm text-zinc-400 font-bold opacity-80">
-              {user?.email}
-            </Text>
+    <AuthenticatedLayout>
+      <View className="flex-1 px-8 justify-center items-center">
+        <View className="bg-green-500/10 p-6 rounded-[32px] items-center border border-green-500/20 mb-8">
+          <View className="bg-green-500 w-16 h-16 rounded-full items-center justify-center mb-4 shadow-lg shadow-green-500/50">
+            <LinkIcon size={32} color="white" />
           </View>
-
-          <TouchableOpacity onPress={handleLogout} activeOpacity={0.7}>
-            {user?.photoURL ? (
-              <View className="ml-4 rounded-full border-2 border-zinc-800 p-0.5">
-                <Image
-                  source={{ uri: user.photoURL }}
-                  className="w-14 h-14 rounded-full"
-                />
-              </View>
-            ) : (
-              <View className="ml-4 w-14 h-14 rounded-full border-2 border-zinc-800 bg-zinc-800 items-center justify-center">
-                <Text className="text-white font-bold">
-                  {user?.displayName?.charAt(0)}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
+          <Text className="text-white text-2xl font-black tracking-tight">
+            Connected
+          </Text>
+          <Text className="text-zinc-500 font-bold mt-2 text-center">
+            You are now connected to your PC.{"\n"}All OTPs will be
+            automatically synced.
+          </Text>
         </View>
-      </View>
 
-      {/* Main content placeholder */}
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl text-black dark:text-white">
-          Welcome to OTP Clipper!
-        </Text>
+        <TouchableOpacity
+          className="bg-[#121212] flex-row items-center px-8 py-4 rounded-full border border-white/5"
+          // @ts-ignore
+          onPress={() => router.replace("/scan")}
+        >
+          <Ionicons name="refresh" size={18} color="white" opacity={0.6} />
+          <Text className="text-white font-bold ml-3 opacity-60 uppercase text-xs tracking-widest">
+            Re-pair Device
+          </Text>
+        </TouchableOpacity>
       </View>
-
-      <ConfirmModal
-        visible={showLogoutModal}
-        title="Logout"
-        description="Are you sure you want to logout? You will need to sign in again to access  your account and settings."
-        confirmText="Logout"
-        confirmButtonColor="bg-red-700"
-        onConfirm={confirmLogout}
-        onCancel={() => setShowLogoutModal(false)}
-      />
-    </View>
+    </AuthenticatedLayout>
   );
 }

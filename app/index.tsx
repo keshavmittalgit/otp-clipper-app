@@ -24,7 +24,7 @@ if (__DEV__) {
     }
     if (typeof originalHandler === "function") {
       // @ts-ignore
-      originalHandler.apply(global, arguments);
+      originalHandler(id, error);
     }
   };
 }
@@ -48,7 +48,7 @@ export default function Index() {
     if (!initializing) {
       if (user) {
         // @ts-ignore
-        router.replace("/dashboard");
+        router.replace("/scan");
       } else {
         // @ts-ignore
         router.replace("/login");

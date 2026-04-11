@@ -52,7 +52,7 @@ export default function Login() {
 
       console.log("Logged in user:", userCredential.user);
       // @ts-ignore
-      router.replace("/dashboard");
+      router.replace("/scan");
     } catch (error) {
       console.error("Google Sign-In Error:", error);
       alert("Login failed: " + (error as Error).message);
@@ -83,7 +83,7 @@ export default function Login() {
 
       console.log("Sign‑up successful");
       // @ts-ignore
-      router.replace("/dashboard"); // after sign‑up, navigate to dashboard
+      router.replace("/scan"); // after sign‑up, navigate to scanner
     } catch (error) {
       console.error("Google Sign‑Up Error:", error);
       alert("Sign‑up failed: " + (error as Error).message);
@@ -146,9 +146,9 @@ export default function Login() {
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row justify-center mt-4">
+            <View className="flex-row justify-center mt-6">
               <Text className="text-black dark:text-white opacity-40 text-base">
-                If you don't have an account{" "}
+                If you don&apos;t have an account{" "}
               </Text>
               <TouchableOpacity onPress={handleSignUp} activeOpacity={0.8}>
                 <Text className="text-black dark:text-white font-extrabold text-base underline decoration-slice">
